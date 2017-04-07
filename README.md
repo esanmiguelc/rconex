@@ -1,6 +1,6 @@
 # Rconex
 
-**TODO: Add description**
+Rcon client implementation in elixir
 
 ## Installation
 
