@@ -1,15 +1,21 @@
 defmodule TcpServer do
-  use Supervisor
+  use GenServer
 
   def listen(port) do
-    Supervisor.start_link(__MODULE__, port)
+    GenServer.start_link(__MODULE__, port)
   end
 
   def init(port) do
-    children = [
-      worker(Task, [TcpServer.Instance, :accept, [port]])
-    ]
+    pid = self()
+    Task.async(fn ->
+      TcpServer.Instance.listen(pid, port)
+    end)
 
-    supervise(children, strategy: :one_for_one)
+    {:ok, port}
+  end
+
+  def handle_cast({:message, data}, state) do
+    IO.puts data
+    {:noreply, state}
   end
 end
